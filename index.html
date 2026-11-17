@@ -11,7 +11,7 @@
   --fg:#2A2540; --muted:#6F6890;
   --glass-edge:rgba(255,255,255,.85); --glass-fill:rgba(255,255,255,.46); --glass-line:rgba(255,255,255,.75);
   --body-hi:rgba(255,255,255,.62); --body-mid:rgba(255,255,255,.2); --body-lo:rgba(255,255,255,.34); --body-tint:rgba(184,172,232,.26);
-  --shadow:rgba(70,50,120,.26);
+  --shadow:rgba(70,50,120,.26); --panel:rgba(255,255,255,.7); --item:rgba(255,255,255,.82);
   --btn:#2A2540; --btn-fg:#FFFFFF;
   --ink:#2A2530; --ink-soft:#8A8294; --paper-shadow:rgba(60,40,100,.32);
   --focus:#2F6FED;
@@ -24,7 +24,7 @@
     --fg:#F1ECFF; --muted:#B3AAD6;
     --glass-fill:rgba(255,255,255,.14); --glass-line:rgba(255,255,255,.4);
     --body-hi:rgba(255,255,255,.34); --body-mid:rgba(255,255,255,.08); --body-lo:rgba(255,255,255,.18); --body-tint:rgba(150,140,220,.18);
-    --shadow:rgba(0,0,0,.5);
+    --shadow:rgba(0,0,0,.5); --panel:rgba(38,32,62,.72); --item:rgba(255,255,255,.09);
     --btn:#F1ECFF; --btn-fg:#1B1730; --paper-shadow:rgba(0,0,0,.6); --focus:#7FA8FF;
     color-scheme:dark;
   }
@@ -33,7 +33,7 @@
   --bg1:#1B1730; --bg2:#2A1B2A; --blob-a:#2E6B5C; --blob-b:#8A3A5E; --blob-c:#3A4F9A; --blob-d:#8A6B1E;
   --fg:#F1ECFF; --muted:#B3AAD6; --glass-fill:rgba(255,255,255,.14); --glass-line:rgba(255,255,255,.4);
   --body-hi:rgba(255,255,255,.34); --body-mid:rgba(255,255,255,.08); --body-lo:rgba(255,255,255,.18); --body-tint:rgba(150,140,220,.18);
-  --shadow:rgba(0,0,0,.5); --btn:#F1ECFF; --btn-fg:#1B1730; --paper-shadow:rgba(0,0,0,.6); --focus:#7FA8FF; color-scheme:dark;
+  --shadow:rgba(0,0,0,.5); --panel:rgba(38,32,62,.72); --item:rgba(255,255,255,.09); --btn:#F1ECFF; --btn-fg:#1B1730; --paper-shadow:rgba(0,0,0,.6); --focus:#7FA8FF; color-scheme:dark;
 }
 
 html,body{height:100%;overscroll-behavior:none}
@@ -69,6 +69,7 @@ button{font-family:inherit}
 .g-rim{fill:none;stroke:var(--glass-edge);stroke-width:2.6}
 .g-soft{filter:url(#soft)}
 
+.binhit{position:absolute;inset:0;z-index:4;margin:0;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation;border-radius:28%}
 .fab{position:absolute;z-index:5;left:50%;top:61%;width:68px;height:68px;margin:0;padding:0;border-radius:50%;
   display:grid;place-items:center;color:var(--fg);cursor:pointer;touch-action:manipulation;
   background:rgba(255,255,255,.46);border:1.5px solid rgba(255,255,255,.85);
@@ -103,9 +104,9 @@ button{font-family:inherit}
 .note{flex:1;min-height:0;width:100%;margin:0;padding:0;border:0;outline:0;resize:none;background:transparent;
   color:var(--ink);caret-color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.6}
 .note::placeholder{color:var(--ink-soft)}
-.card-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 12px}
-.card-foot small{font-size:12.5px;color:var(--ink-soft)}
-.toss{min-height:46px;padding:0 26px;border:0;border-radius:23px;background:var(--btn);color:var(--btn-fg);
+.card-foot{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.card-foot small{flex:1;min-width:0;font-size:12.5px;line-height:1.4;color:var(--ink-soft);text-wrap:balance}
+.toss{flex:none;margin-left:auto;min-height:46px;padding:0 26px;border:0;border-radius:23px;background:var(--btn);color:var(--btn-fg);
   font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation;box-shadow:0 4px 10px rgba(42,37,64,.3);transition:opacity .15s,transform .15s}
 .toss:active{transform:scale(.96)}
 .toss:disabled{opacity:.3;cursor:default}
@@ -117,8 +118,28 @@ button{font-family:inherit}
 .fold{position:absolute;inset:0;opacity:0;background:var(--crease-img) center/100% 100% no-repeat}
 .ballimg{position:absolute;opacity:0;background-size:100% 100%;background-repeat:no-repeat}
 
+.history{position:fixed;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:center;padding:16px;
+  background:rgba(42,37,64,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.history.open{opacity:1;pointer-events:auto}
+.hpanel{width:min(100%,440px);max-height:min(74dvh,620px);display:flex;flex-direction:column;box-sizing:border-box;padding:18px 16px 14px;border-radius:26px;
+  background:var(--panel);border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(22px) saturate(1.6);backdrop-filter:blur(22px) saturate(1.6);
+  box-shadow:0 20px 50px var(--shadow);transform:translateY(28px);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.history.open .hpanel{transform:none}
+.hhead{display:flex;align-items:center;gap:10px;padding-inline:4px}
+.hhead h2{margin:0;font-size:18px;font-weight:700;letter-spacing:-.01em}
+.hcount{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hclose{margin:0 0 0 auto;width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;color:var(--fg);
+  background:rgba(255,255,255,.4);border:1px solid var(--glass-line)}
+.hclose svg{width:16px;height:16px}
+.hlist{list-style:none;margin:12px 0 0;padding:0 2px 4px;overflow:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:10px}
+.hitem{padding:12px 14px;border-radius:16px;background:var(--item);border:1px solid var(--glass-line)}
+.hmeta{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.htext{margin:0;font-size:15px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.hempty{padding:26px 10px;text-align:center;font-size:14px;line-height:1.5;color:var(--muted)}
+
 @media (prefers-reduced-motion: reduce){
-  .card,.fab,.fab svg,.toss{transition:none}
+  .card,.fab,.fab svg,.toss,.history,.hpanel{transition:none}
 }
 </style>
 
@@ -158,6 +179,7 @@ button{font-family:inherit}
         <path class="g-line" style="opacity:.55" d="M44 272 Q47 296 70 296 L190 296 Q213 296 216 272"/>
       </svg>
 
+      <button class="binhit" id="binhit" type="button" aria-label="View thrown notes"></button>
       <button class="fab" id="fab" type="button" aria-label="Open note" aria-expanded="false" aria-controls="card">
         <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M17 6v22M6 17h22"/></svg>
       </button>
@@ -171,8 +193,20 @@ button{font-family:inherit}
 <div class="card" id="card" role="dialog" aria-label="Note" inert>
   <textarea class="note" id="note" maxlength="1000" placeholder="Write down whatever is on your mind" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="enter"></textarea>
   <div class="card-foot">
-    <small>Once thrown away, it can't be read again.</small>
+    <small>Tap the bin later to look back at what you've thrown.</small>
     <button class="toss" id="toss" type="button" disabled>Throw away</button>
+  </div>
+</div>
+
+<div class="history" id="history" role="dialog" aria-modal="true" aria-labelledby="hTitle" inert>
+  <div class="hpanel">
+    <div class="hhead">
+      <h2 id="hTitle">Thrown away</h2><span class="hcount" id="hcount"></span>
+      <button class="hclose" id="hclose" type="button" aria-label="Close list">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg>
+      </button>
+    </div>
+    <ol class="hlist" id="hlist"></ol>
   </div>
 </div>
 
@@ -184,13 +218,18 @@ button{font-family:inherit}
   var $ = function(s){ return document.querySelector(s); };
   var root = document.documentElement;
   var app = $('#app'), card = $('#card'), note = $('#note'), tossBtn = $('#toss'), fab = $('#fab');
+  var history = $('#history'), hlist = $('#hlist'), hcount = $('#hcount'), hclose = $('#hclose'), binhit = $('#binhit');
   var status = $('#status'), tally = $('#tally'), bin = $('#bin'), pile = $('#pile'), mouth = $('#mouth'), backdrop = $('#backdrop');
   var parts = bin.querySelectorAll('.bpart');
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var MSG = ['Thrown away. You can let it go now.', 'Into the bin it goes.', 'A little lighter now.'];
 
-  var count = 0, busy = false, isOpen = false;
+  var ITEMS_KEY = 'thought-trash-items';
+  var count = 0, busy = false, isOpen = false, items = [];
   try { count = Math.max(0, parseInt(localStorage.getItem(KEY) || '0', 10) || 0); } catch (e) {}
+  try { var raw = JSON.parse(localStorage.getItem(ITEMS_KEY) || '[]'); if (Array.isArray(raw)) items = raw.filter(function(o){ return o && typeof o.t === 'string'; }); } catch (e) {}
+  count = Math.max(count, items.length);
+  function saveItems(){ try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch (e) {} }
 
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
   function save(){ try { localStorage.setItem(KEY, String(count)); } catch (e) {} }
@@ -402,7 +441,51 @@ button{font-family:inherit}
     app.classList.remove('open');
   }
   fab.addEventListener('click', function(){ if (busy) return; isOpen ? closeCard() : openCard(); });
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !busy) closeCard(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Escape') return;
+    if (history.classList.contains('open')) closeHistory(); else if (!busy) closeCard();
+  });
+
+  /* ================= 버린 메모 목록: 쓰레기통을 누르면 최근 것부터 차례대로 ================= */
+  function fmt(at){
+    try { return new Date(at).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); } catch (e) { return ''; }
+  }
+  function renderHistory(){
+    hlist.textContent = '';
+    hcount.textContent = items.length ? items.length + (items.length === 1 ? ' note' : ' notes') : '';
+    if (!items.length){
+      var li0 = document.createElement('li'); li0.className = 'hempty';
+      li0.textContent = 'Nothing here yet. Throw a thought away and it will show up in this list.';
+      hlist.appendChild(li0); return;
+    }
+    for (var i = items.length - 1; i >= 0; i--){
+      var li = document.createElement('li'); li.className = 'hitem';
+      var meta = document.createElement('div'); meta.className = 'hmeta';
+      var a = document.createElement('span'); a.textContent = '#' + (i + 1);
+      var b = document.createElement('span'); b.textContent = fmt(items[i].at);
+      meta.appendChild(a); meta.appendChild(b);
+      var p = document.createElement('p'); p.className = 'htext'; p.textContent = items[i].t;
+      li.appendChild(meta); li.appendChild(p); hlist.appendChild(li);
+    }
+    if (count > items.length){
+      var li2 = document.createElement('li'); li2.className = 'hempty';
+      li2.textContent = (count - items.length) + ' earlier ' + (count - items.length === 1 ? 'note was' : 'notes were') + ' thrown before saving was added.';
+      hlist.appendChild(li2);
+    }
+  }
+  function openHistory(){
+    if (busy || isOpen) return;
+    renderHistory();
+    history.inert = false; history.classList.add('open'); hlist.scrollTop = 0;
+    hclose.focus({ preventScroll: true });
+  }
+  function closeHistory(){
+    history.classList.remove('open'); history.inert = true;
+    binhit.focus({ preventScroll: true });
+  }
+  binhit.addEventListener('click', openHistory);
+  hclose.addEventListener('click', closeHistory);
+  history.addEventListener('click', function(e){ if (e.target === history) closeHistory(); });
   note.addEventListener('input', function(){ tossBtn.disabled = !note.value.trim(); });
 
   function bounce(){
@@ -507,6 +590,8 @@ button{font-family:inherit}
     wrap.remove();
     bounce();
     status.textContent = MSG[count % MSG.length];
+    items.push({ t: text, at: Date.now() }); if (items.length > 300) items = items.slice(-300);
+    saveItems();
     count += 1; save(); renderTally();
     fab.disabled = false; busy = false;
   }
