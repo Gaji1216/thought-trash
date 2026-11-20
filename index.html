@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#EEE6F8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Thought Trash"><link rel="apple-touch-icon" href="apple-touch-icon.png"><style>html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}body{margin:0}</style>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#EEE6F8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Thought Trash"><link rel="apple-touch-icon" href="apple-touch-icon.png"><script data-goatcounter="https://gaji1216.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<style>html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}body{margin:0}</style>
 <title>Thought Trash</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -229,6 +231,7 @@ button{font-family:inherit}
   try { count = Math.max(0, parseInt(localStorage.getItem(KEY) || '0', 10) || 0); } catch (e) {}
   try { var raw = JSON.parse(localStorage.getItem(ITEMS_KEY) || '[]'); if (Array.isArray(raw)) items = raw.filter(function(o){ return o && typeof o.t === 'string'; }); } catch (e) {}
   count = Math.max(count, items.length);
+  function track(name){ try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: name, title: name, event: true }); } catch (e) {} }  // 이벤트 이름만 전송, 메모 내용은 절대 보내지 않음
   function saveItems(){ try { localStorage.setItem(ITEMS_KEY, JSON.stringify(items)); } catch (e) {} }
 
   function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
@@ -475,6 +478,7 @@ button{font-family:inherit}
   }
   function openHistory(){
     if (busy || isOpen) return;
+    track('trash-open-list');
     renderHistory();
     history.inert = false; history.classList.add('open'); hlist.scrollTop = 0;
     hclose.focus({ preventScroll: true });
@@ -593,6 +597,7 @@ button{font-family:inherit}
     items.push({ t: text, at: Date.now() }); if (items.length > 300) items = items.slice(-300);
     saveItems();
     count += 1; save(); renderTally();
+    track('trash-throw');
     fab.disabled = false; busy = false;
   }
   tossBtn.addEventListener('click', toss);
